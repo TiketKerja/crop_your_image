@@ -32,7 +32,19 @@ class ImageImageCropper extends ImageCropper<Image> {
         topLeft.dy.toInt() > original.height ||
         bottomRight.dx.toInt() > original.width ||
         bottomRight.dy.toInt() > original.height) || (topLeft.dx > bottomRight.dx || topLeft.dy > bottomRight.dy)) {
-      return original.data!.getBytes();
+      final function = switch (shape) {
+        ImageShape.rectangle => _doCrop,
+        ImageShape.circle => _doCropCircle,
+      };
+
+      return function(
+        original,
+        topLeft: topLeft,
+        size: Size(
+          bottomRight.dx - topLeft.dx,
+          bottomRight.dy - topLeft.dy,
+        ),
+      );
     } else {
       final function = switch (shape) {
         ImageShape.rectangle => _doCrop,
