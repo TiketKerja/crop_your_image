@@ -453,25 +453,29 @@ class _CropEditorState extends State<_CropEditor> {
 
     widget.onStatusChanged?.call(CropStatus.cropping);
 
-    // use compute() not to block UI update
-    final cropResult = await compute(
-      _cropFunc,
-      [
-        widget.imageCropper,
-        _parsedImageDetail!.image,
-        Rect.fromLTWH(
-          (_cropRect.left - _imageRect.left) * screenSizeRatio / _scale,
-          (_cropRect.top - _imageRect.top) * screenSizeRatio / _scale,
-          _cropRect.width * screenSizeRatio / _scale,
-          _cropRect.height * screenSizeRatio / _scale,
-        ),
-        withCircleShape,
-        _detectedFormat,
-      ],
-    );
+    try {
+      // use compute() not to block UI update
+      final cropResult = await compute(
+        _cropFunc,
+        [
+          widget.imageCropper,
+          _parsedImageDetail!.image,
+          Rect.fromLTWH(
+            (_cropRect.left - _imageRect.left) * screenSizeRatio / _scale,
+            (_cropRect.top - _imageRect.top) * screenSizeRatio / _scale,
+            _cropRect.width * screenSizeRatio / _scale,
+            _cropRect.height * screenSizeRatio / _scale,
+          ),
+          withCircleShape,
+          _detectedFormat,
+        ],
+      );
 
-    widget.onCropped(cropResult);
-    widget.onStatusChanged?.call(CropStatus.ready);
+      widget.onCropped(cropResult);
+      widget.onStatusChanged?.call(CropStatus.ready);
+    } catch(e) {
+      throw Error();
+    }
   }
 
   // for zooming
